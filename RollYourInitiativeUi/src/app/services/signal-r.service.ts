@@ -19,7 +19,7 @@ export class SignalRService {
   private initiativeHubEndpoint: string = environment.baseUrl +  'initiative';
   
 
-    public startConnection(){
+    public startConnection(sessionId: string){
       this.hubConnection = new signalR.HubConnectionBuilder()
                               .withUrl(this.initiativeHubEndpoint)
                               .build();
@@ -27,15 +27,15 @@ export class SignalRService {
         .start()
         .then(() => {
           console.log('Connection started with Initiative Hub')
-          this.fetchInitialData();
+          this.fetchInitialData(sessionId);
         })
         .catch(err => console.log('Error while starting connection: ' + err));
 
       this.setSignalrClientMethods();
     }
 
-  private fetchInitialData() {
-    this.http.get(environment.baseUrl + "api/initiative")
+  private fetchInitialData(sessionId: string) {
+    this.http.get(environment.baseUrl + "api/initiative?sessionId=" + sessionId)
       .pipe(take(1))
       .subscribe();
   }
@@ -50,27 +50,27 @@ export class SignalRService {
       this.broadcastData = datasource;
     }
 
-    public addCharacter(character: Character) {      
+    public addCharacter(sessionId: string, character: Character) {      
       this.hubConnection
-      .invoke('addorupdatecharacter', character)
+      .invoke('addorupdatecharacter', sessionId, character)
       .catch(err => console.error(err));
     }
 
-    public deleteCharacter(character: Character) {
+    public deleteCharacter(sessionId: string, character: Character) {
       this.hubConnection
-      .invoke('deletecharacter', character)
+      .invoke('deletecharacter', sessionId, character)
       .catch(err => console.error(err));
     }
 
-    advanceRound() {
+    advanceRound(sessionId: string,) {
       this.hubConnection
-      .invoke('advanceRound')
+      .invoke('advanceRound', sessionId)
       .catch(err => console.error(err));
     }
 
-    endCombat() {
+    endCombat(sessionId: string,) {
       this.hubConnection
-      .invoke('endCombat')
+      .invoke('endCombat', sessionId)
       .catch(err => console.error(err));
     }
    

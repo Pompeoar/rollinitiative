@@ -1,0 +1,11 @@
+<div class="session-container">
+    <button mat-raised-button class="session-item" color="primary" (click)="startSession()">Start a session</button>
+    <div class="session-item">
+        <mat-form-field class="example-full-width" appearance="fill">
+            <mat-label>Join a Session</mat-label>
+            <input matInput placeholder="J3G-A23" [(ngModel)]="model">
+        </mat-form-field>
+    </div>    
+      <button mat-raised-button class="session-item" color="primary" (click)="joinSession()">Join Session</button>
+
+</div>

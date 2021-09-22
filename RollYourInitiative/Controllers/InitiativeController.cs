@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.SignalR;
 using RollYourInitiative.HubConfig;
 
@@ -16,9 +17,13 @@ namespace RollYourInitiative.Controllers
             _hub = hub;
             this.initiativeService = initiativeService;
         }
-        public IActionResult Get()
-        {
-            _hub.Clients.All.SendAsync(WebSocketActions.BROADCAST_CHANGES, initiativeService.GetData());
+
+        public IActionResult Get(string sessionId)
+        {            
+            _hub.Clients.All.SendAsync(WebSocketActions.BROADCAST_CHANGES, 
+                initiativeService.SessionExists(sessionId) 
+                ? initiativeService.GetData(sessionId) 
+                : initiativeService.CreateSession(sessionId));
             return Ok(new { Message = "Request Completed" });
         }
     }

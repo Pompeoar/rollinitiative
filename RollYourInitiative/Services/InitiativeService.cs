@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.TagHelpers;
-using RollYourInitiative.Models;
+﻿using RollYourInitiative.Models;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -9,58 +8,63 @@ namespace RollYourInitiative
 {
     public class InitiativeService : IInitiativeService
     {
-        static readonly ConcurrentDictionary<string, Character> characters = new();
+        static readonly ConcurrentDictionary<string, List<Character>> characters = new();
 
-        public InitiativeService()
+        public bool SessionExists(string sessionId) => characters.ContainsKey(sessionId);
+        public List<Character> CreateSession(string sessionId)
         {
-            // initial data
-            characters["WhiskeyJack"] = new Character { Name = "WhiskeyJack", Initiative = new Initiative { Advantage = true, Bonus = 4, Value = 0 }, Sticky = true };
-            characters["Dinkels"] = new Character { Name = "Dinkels", Initiative = new Initiative { Advantage = false, Bonus = 3, Value = 0 }, Sticky = true };
-            characters["Tolen"] = new Character { Name = "Tolen", Initiative = new Initiative { Advantage = false, Bonus = 0, Value = 0 }, Sticky = true };
-            characters["Vykodin"] = new Character { Name = "Vykodin", Initiative = new Initiative { Advantage = false, Bonus = 1, Value = 0 }, Sticky = true };
-            characters["Newt"] = new Character { Name = "Newt", Initiative = new Initiative { Advantage = false, Bonus = 4, Value = 0 }, Sticky = true };
+            characters[sessionId] = new List<Character>();
+            return characters[sessionId];
         }
 
-        public List<Character> GetData() =>
-            characters
-            .Select(c => c.Value)
+        public List<Character> GetData(string sessionId) =>
+            characters[sessionId]            
             .OrderByDescending(c => c.Initiative.Value)
             .ThenByDescending(c => c.Initiative.Bonus)
             .ToList();
 
-        public void DeleteCharacter(Character character) => characters.TryRemove(character.Name, out var _);
-        public void AddOrUpdateCharacter(Character character) => characters[character.Name] = character;
-        public void RandomizeInitiative()
+        public void DeleteCharacter(string sessionId, Character character) => 
+            characters[sessionId].Remove(characters[sessionId].First(c => c.Name == character.Name));
+
+        public List<Character> AddOrUpdateCharacter(string sessionId, Character characterToAddOrUpdate) =>
+            characters[sessionId].Any(c => c.Name == characterToAddOrUpdate.Name)
+            ? UpdateCharacter(sessionId, characterToAddOrUpdate)
+            : AddCharacter(sessionId, characterToAddOrUpdate);
+
+        private static List<Character> AddCharacter(string sessionId, Character characterToAdd)
+        {
+            characters[sessionId].Add(characterToAdd);
+            return characters[sessionId];
+        }
+
+        private static List<Character> UpdateCharacter(string sessionId, Character characterToUpdate)
+        {
+            characters[sessionId].Remove(characters[sessionId].First(c => c.Name == characterToUpdate.Name));
+            characters[sessionId].Add(characterToUpdate);
+            return characters[sessionId];
+        }
+
+        public List<Character> RandomizeInitiative(string sessionId)
         {
             Random r = new();
-            foreach (var character in characters)
+            foreach (var character in characters[sessionId])
             {
-                character.Value.Initiative.Value = character.Value.Initiative.Advantage
-                    ? Math.Max(RollDTwenty(r), RollDTwenty(r)) + character.Value.Initiative.Bonus
-                    : RollDTwenty(r) + character.Value.Initiative.Bonus;
+                character.Initiative.Value = character.Initiative.Advantage
+                    ? Math.Max(RollDTwenty(r), RollDTwenty(r)) + character.Initiative.Bonus
+                    : RollDTwenty(r) + character.Initiative.Bonus;
             }
+            return characters[sessionId];
         }
 
-        private int RollDTwenty(Random r) => r.Next(1, 20);
+        private static int RollDTwenty(Random r) => r.Next(1, 20);
 
-        public void ClearUnstickied()
-        {
-            var charactersToRemove = characters
-                .Where(c => !c.Value.Sticky)
-                .Select(c => c.Value)
-                .ToList();
-            foreach (var character in charactersToRemove)
-            {
-                DeleteCharacter(character);
-            };
-            
-        }
+        public void ClearUnstickied(string sessionId) => characters[sessionId].RemoveAll(c => !c.Sticky);
 
-        public void ResetInitiatives()
+        public void ResetInitiatives(string sessionId)
         {
-            foreach (var character in characters)
+            foreach (var character in characters[sessionId])
             {
-                character.Value.Initiative.Value = 0;
+                character.Initiative.Value = 0;
             }
         }
     }

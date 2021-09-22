@@ -1,0 +1,10 @@
+.session-container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.session-item{
+    flex: 0 1 auto;
+    margin: 1em;
+}

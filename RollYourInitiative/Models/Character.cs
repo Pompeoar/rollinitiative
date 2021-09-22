@@ -1,10 +1,9 @@
 ﻿namespace RollYourInitiative.Models
 {
-    public class Character
+    public record Character 
     {
-        public string Name { get; set; }
-        public Initiative Initiative { get; set; }
-        public bool Sticky { get; set; }
-
+        public string Name { get; init; }
+        public Initiative Initiative { get; init; }
+        public bool Sticky { get; init; }      
     }
 }

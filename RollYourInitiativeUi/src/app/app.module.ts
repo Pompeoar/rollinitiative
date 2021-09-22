@@ -13,6 +13,8 @@ import { AppComponent } from './app.component';
 import { InitiativePageComponent } from './components/initiative-page/initiative-page.component';
 import { InitiativeTableComponent } from './components/initiative-table/initiative-table.component';
 import { SignalRService } from './services/signal-r.service';
+import { AppRoutingModule } from './app-routing.module';
+import { SessionComponent } from './components/session/session.component';
 
 const materials = [
   MatButtonModule,
@@ -26,14 +28,16 @@ const materials = [
   declarations: [
     AppComponent,
     InitiativePageComponent,
-    InitiativeTableComponent
+    InitiativeTableComponent,
+    SessionComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
     HttpClientModule,
     BrowserAnimationsModule,
-    materials    
+    materials,
+    AppRoutingModule    
   ],
   providers: [SignalRService],
   bootstrap: [AppComponent]

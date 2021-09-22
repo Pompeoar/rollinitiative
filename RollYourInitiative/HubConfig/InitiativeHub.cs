@@ -12,29 +12,23 @@ namespace RollYourInitiative.HubConfig
         {
             this.initiativeService = initiativeService;
         }
-        public async Task AddOrUpdateCharacter(Character character)
+        public async Task AddOrUpdateCharacter(string sessionId, Character character) => 
+            await Clients.All.SendAsync(WebSocketActions.BROADCAST_CHANGES, initiativeService.AddOrUpdateCharacter(sessionId, character));
+
+        public async Task DeleteCharacter(string sessionId, Character character)
         {
-            initiativeService.AddOrUpdateCharacter(character);
-            await Clients.All.SendAsync(WebSocketActions.BROADCAST_CHANGES, initiativeService.GetData());
+            initiativeService.DeleteCharacter(sessionId, character);
+            await Clients.All.SendAsync(WebSocketActions.BROADCAST_CHANGES, initiativeService.GetData(sessionId));
         }
 
-        public async Task DeleteCharacter(Character character)
-        {
-            initiativeService.DeleteCharacter(character);
-            await Clients.All.SendAsync(WebSocketActions.BROADCAST_CHANGES, initiativeService.GetData());
-        }
+        public async Task AdvanceRound(string sessionId) => 
+            await Clients.All.SendAsync(WebSocketActions.BROADCAST_CHANGES, initiativeService.RandomizeInitiative(sessionId));
 
-        public async Task AdvanceRound()
+        public async Task EndCombat(string sessionId)
         {
-            initiativeService.RandomizeInitiative();
-            await Clients.All.SendAsync(WebSocketActions.BROADCAST_CHANGES, initiativeService.GetData());
-        }
-
-        public async Task EndCombat()
-        {
-            initiativeService.ClearUnstickied();
-            initiativeService.ResetInitiatives();
-            await Clients.All.SendAsync(WebSocketActions.BROADCAST_CHANGES, initiativeService.GetData());
+            initiativeService.ClearUnstickied(sessionId);
+            initiativeService.ResetInitiatives(sessionId);
+            await Clients.All.SendAsync(WebSocketActions.BROADCAST_CHANGES, initiativeService.GetData(sessionId));
         }
         
     }
