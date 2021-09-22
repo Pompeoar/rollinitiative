@@ -33,6 +33,7 @@ namespace RollYourInitiative.HubConfig
         public async Task EndCombat()
         {
             initiativeService.ClearUnstickied();
+            initiativeService.ResetInitiatives();
             await Clients.All.SendAsync(WebSocketActions.BROADCAST_CHANGES, initiativeService.GetData());
         }
         

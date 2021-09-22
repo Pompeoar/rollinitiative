@@ -10,5 +10,6 @@ namespace RollYourInitiative
         List<Character> GetData();
         void RandomizeInitiative();
         void ClearUnstickied();
+        void ResetInitiatives();
     }
 }

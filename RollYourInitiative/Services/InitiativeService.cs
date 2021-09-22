@@ -1,4 +1,5 @@
-﻿using RollYourInitiative.Models;
+﻿using Microsoft.AspNetCore.Mvc.TagHelpers;
+using RollYourInitiative.Models;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -52,6 +53,15 @@ namespace RollYourInitiative
             {
                 DeleteCharacter(character);
             };
+            
+        }
+
+        public void ResetInitiatives()
+        {
+            foreach (var character in characters)
+            {
+                character.Value.Initiative.Value = 0;
+            }
         }
     }
 }
