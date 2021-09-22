@@ -10,6 +10,16 @@ namespace RollYourInitiative
     {
         static readonly ConcurrentDictionary<string, Character> characters = new();
 
+        public InitiativeService()
+        {
+            // initial data
+            characters["WhiskeyJack"] = new Character { Name = "WhiskeyJack", Initiative = new Initiative { Advantage = true, Bonus = 4, Value = 0 }, Sticky = true };
+            characters["Dinkels"] = new Character { Name = "Dinkels", Initiative = new Initiative { Advantage = false, Bonus = 3, Value = 0 }, Sticky = true };
+            characters["Tolen"] = new Character { Name = "Tolen", Initiative = new Initiative { Advantage = false, Bonus = 0, Value = 0 }, Sticky = true };
+            characters["Vykodin"] = new Character { Name = "Vykodin", Initiative = new Initiative { Advantage = false, Bonus = 1, Value = 0 }, Sticky = true };
+            characters["Newt"] = new Character { Name = "Newt", Initiative = new Initiative { Advantage = false, Bonus = 4, Value = 0 }, Sticky = true };
+        }
+
         public List<Character> GetData() =>
             characters
             .Select(c => c.Value)
@@ -32,10 +42,10 @@ namespace RollYourInitiative
 
         private int RollDTwenty(Random r) => r.Next(1, 20);
 
-        public void ClearUnstickied() 
+        public void ClearUnstickied()
         {
             var charactersToRemove = characters
-                .Where(c=> !c.Value.Sticky)
+                .Where(c => !c.Value.Sticky)
                 .Select(c => c.Value)
                 .ToList();
             foreach (var character in charactersToRemove)
