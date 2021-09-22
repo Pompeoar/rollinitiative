@@ -1,0 +1,29 @@
+.demo-table {
+  width: 100%;
+}
+
+
+.button-item{
+    padding: 1em;
+}
+
+.button-container{
+    display: flex;
+    flex-direction: row;
+}
+
+.demo-button + .demo-button {
+  margin-left: 8px;
+}
+.tracker-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+
+.tracker-item {
+  padding-right: 5em;
+}
+
+

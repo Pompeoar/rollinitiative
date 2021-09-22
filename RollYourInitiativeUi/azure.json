@@ -1,0 +1,17 @@
+{
+  "hosting": [
+    {
+      "app": {
+        "project": "RollYourInitiativeClient",
+        "target": "build",
+        "configuration": "production",
+        "path": "dist/RollYourInitiativeClient"
+      },
+      "azureHosting": {
+        "subscription": "e7caf91e-c10d-47b0-b910-ff9cb3c1a400",
+        "resourceGroupName": "RollYourInitiativeClient-static-deploy",
+        "account": "rollyourinitiativestatic"
+      }
+    }
+  ]
+}
