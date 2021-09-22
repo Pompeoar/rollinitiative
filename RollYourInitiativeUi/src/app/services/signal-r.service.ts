@@ -26,6 +26,7 @@ export class SignalRService {
       this.hubConnection
         .start()
         .then(() => {
+          this.hubConnection.invoke("JoinGroup", sessionId);
           console.log('Connection started with Initiative Hub')
           this.fetchInitialData(sessionId);
         })

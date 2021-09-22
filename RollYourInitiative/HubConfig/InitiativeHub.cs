@@ -8,29 +8,29 @@ namespace RollYourInitiative.HubConfig
     {
         private readonly IInitiativeService initiativeService;
 
+        public async Task JoinGroup(string sessionId) => await Groups.AddToGroupAsync(Context.ConnectionId, sessionId);
         public InitiativeHub(IInitiativeService initiativeService)
         {
             this.initiativeService = initiativeService;
         }
         public async Task AddOrUpdateCharacter(string sessionId, Character character) => 
-            await Clients.All.SendAsync(WebSocketActions.BROADCAST_CHANGES, initiativeService.AddOrUpdateCharacter(sessionId, character));
+            await Clients.Group(sessionId).SendAsync(WebSocketActions.BROADCAST_CHANGES, initiativeService.AddOrUpdateCharacter(sessionId, character));
 
         public async Task DeleteCharacter(string sessionId, Character character)
         {
             initiativeService.DeleteCharacter(sessionId, character);
-            await Clients.All.SendAsync(WebSocketActions.BROADCAST_CHANGES, initiativeService.GetData(sessionId));
+            await Clients.Group(sessionId).SendAsync(WebSocketActions.BROADCAST_CHANGES, initiativeService.GetData(sessionId));
         }
 
         public async Task AdvanceRound(string sessionId) => 
-            await Clients.All.SendAsync(WebSocketActions.BROADCAST_CHANGES, initiativeService.RandomizeInitiative(sessionId));
+            await Clients.Group(sessionId).SendAsync(WebSocketActions.BROADCAST_CHANGES, initiativeService.RandomizeInitiative(sessionId));
 
         public async Task EndCombat(string sessionId)
         {
             initiativeService.ClearUnstickied(sessionId);
             initiativeService.ResetInitiatives(sessionId);
-            await Clients.All.SendAsync(WebSocketActions.BROADCAST_CHANGES, initiativeService.GetData(sessionId));
-        }
-        
+            await Clients.Group(sessionId).SendAsync(WebSocketActions.BROADCAST_CHANGES, initiativeService.GetData(sessionId));
+        }        
     }
 
     public struct WebSocketActions

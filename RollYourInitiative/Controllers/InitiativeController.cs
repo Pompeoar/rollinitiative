@@ -20,7 +20,7 @@ namespace RollYourInitiative.Controllers
 
         public IActionResult Get(string sessionId)
         {            
-            _hub.Clients.All.SendAsync(WebSocketActions.BROADCAST_CHANGES, 
+            _hub.Clients.Group(sessionId).SendAsync(WebSocketActions.BROADCAST_CHANGES, 
                 initiativeService.SessionExists(sessionId) 
                 ? initiativeService.GetData(sessionId) 
                 : initiativeService.CreateSession(sessionId));
