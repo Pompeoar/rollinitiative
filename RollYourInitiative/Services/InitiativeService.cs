@@ -53,7 +53,7 @@ namespace RollYourInitiative
                     ? Math.Max(RollDTwenty(r), RollDTwenty(r)) + character.Initiative.Bonus
                     : RollDTwenty(r) + character.Initiative.Bonus;
             }
-            return characters[sessionId];
+            return GetData(sessionId);
         }
 
         private static int RollDTwenty(Random r) => r.Next(1, 20);
