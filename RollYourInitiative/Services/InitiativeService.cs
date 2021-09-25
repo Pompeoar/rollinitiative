@@ -31,17 +31,18 @@ namespace RollYourInitiative
             ? UpdateCharacter(sessionId, characterToAddOrUpdate)
             : AddCharacter(sessionId, characterToAddOrUpdate);
 
-        private static List<Character> AddCharacter(string sessionId, Character characterToAdd)
+        private List<Character> AddCharacter(string sessionId, Character characterToAdd)
         {
+            characterToAdd.Initiative.Value =  UpdateInitiative(new Random(), characterToAdd);
             characters[sessionId].Add(characterToAdd);
-            return characters[sessionId];
+            return GetData(sessionId);
         }
 
-        private static List<Character> UpdateCharacter(string sessionId, Character characterToUpdate)
+        private List<Character> UpdateCharacter(string sessionId, Character characterToUpdate)
         {
             characters[sessionId].Remove(characters[sessionId].First(c => c.Name == characterToUpdate.Name));
             characters[sessionId].Add(characterToUpdate);
-            return characters[sessionId];
+            return GetData(sessionId);
         }
 
         public List<Character> RandomizeInitiative(string sessionId)
@@ -49,11 +50,16 @@ namespace RollYourInitiative
             Random r = new();
             foreach (var character in characters[sessionId])
             {
-                character.Initiative.Value = character.Initiative.Advantage
-                    ? Math.Max(RollDTwenty(r), RollDTwenty(r)) + character.Initiative.Bonus
-                    : RollDTwenty(r) + character.Initiative.Bonus;
+                character.Initiative.Value = UpdateInitiative(r, character);
             }
             return GetData(sessionId);
+        }
+
+        private static int UpdateInitiative(Random r, Character character)
+        {
+            return character.Initiative.Advantage
+                                ? Math.Max(RollDTwenty(r), RollDTwenty(r)) + character.Initiative.Bonus
+                                : RollDTwenty(r) + character.Initiative.Bonus;
         }
 
         private static int RollDTwenty(Random r) => r.Next(1, 20);
